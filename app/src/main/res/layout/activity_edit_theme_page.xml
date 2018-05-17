@@ -14,7 +14,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="Type Name of Activity"
-        android:text="New Theme Name "
         android:inputType="text"
         android:id="@+id/editText"
         android:layout_alignParentStart="true" />
