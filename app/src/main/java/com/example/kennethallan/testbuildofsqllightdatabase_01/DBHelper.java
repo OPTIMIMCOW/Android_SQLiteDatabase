@@ -94,7 +94,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
-    public boolean insetData(String name2,String Value2){
+    public boolean insertActivity(String name2,String Value2){
         SQLiteDatabase Mydb =this.getWritableDatabase();
         ContentValues newThingAdd = new ContentValues();
         newThingAdd.put(COL2_ACTIVITIES,name2);
@@ -106,7 +106,7 @@ public class DBHelper extends SQLiteOpenHelper {
             return true;
     }
 
-    public boolean insetTheme(String name2,String Description){
+    public boolean insertTheme(String name2,String Description){
         SQLiteDatabase Mydb =this.getWritableDatabase();
         ContentValues newThingAdd = new ContentValues();
         newThingAdd.put(COL2_ALLTHEMES,name2);

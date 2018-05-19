@@ -25,6 +25,8 @@ public class SetGoals extends AppCompatActivity {
 
     Beans testBean = new Beans(1);
 
+    int globalValue;
+
 
 
     @Override
@@ -69,6 +71,7 @@ public class SetGoals extends AppCompatActivity {
         );*/
 
     }
+
 
     public void TEST(){
 
@@ -152,7 +155,6 @@ public class SetGoals extends AppCompatActivity {
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
                     progressValue = progress;
-
                 }
 
                 @Override
@@ -164,7 +166,6 @@ public class SetGoals extends AppCompatActivity {
                 public void onStopTrackingTouch(SeekBar bar) {
                     progressValue = bar.getProgress();
                     testBean.setNumber(progressValue);
-
                 }
             });
 

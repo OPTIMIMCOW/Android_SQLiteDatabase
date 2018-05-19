@@ -79,7 +79,7 @@ public class EditThemePage extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        boolean isInserted = Mydb.insetTheme(themeName.getText().toString(),themeDescription.getText().toString());
+                        boolean isInserted = Mydb.insertTheme(themeName.getText().toString(),themeDescription.getText().toString());
                         if (isInserted == true)
                             Toast.makeText(EditThemePage.this, "Data is inserted", Toast.LENGTH_SHORT).show();
                         else

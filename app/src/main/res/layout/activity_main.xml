@@ -11,20 +11,21 @@
     tools:context="com.example.kennethallan.testbuildofsqllightdatabase_01.MainActivity">
 
     <Button
-        android:text="Add Theme "
+        android:id="@+id/AddThemeButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
-        android:id="@+id/AddThemeButton"
-        android:layout_below="@+id/AddActivity"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/AddColumn"
+        android:layout_marginTop="13dp"
+        android:text="Add Theme " />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Activity Name "
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView" />
 
 
     <Button
@@ -37,14 +38,14 @@
         android:id="@+id/button_showAll" />
 
     <EditText
+        android:id="@+id/EditTextActivityName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_toStartOf="@+id/button_showAll"
         android:hint="Type Name of Activity"
-        android:text="Name"
         android:inputType="text"
-        android:id="@+id/EditTextActivityName"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="24dp" />
+        android:text="Name" />
 
     <TextView
         android:text="Activity Value "
@@ -121,7 +122,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/editTextID"
-        android:id="@+id/AddActivity" />
+        android:id="@+id/AddColumn" />
 
     <Button
         android:text="Set Goals "
@@ -130,6 +131,14 @@
         android:id="@+id/SetGoalButton"
         android:layout_below="@+id/AddThemeButton"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/SetActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/SetGoalButton"
+        android:text="Add Activity" />
 
 
 </RelativeLayout>

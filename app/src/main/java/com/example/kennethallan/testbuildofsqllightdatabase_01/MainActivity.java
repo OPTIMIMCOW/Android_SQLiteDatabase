@@ -27,7 +27,9 @@ import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
 
-
+// insert activity has a lot of stuff from the tutorial but also is where activities are set into the database.
+// TODO Add a timer to reset all activities in the summation.
+// TODO Transfer adding activities to another activity just for clarity and have a summary of the activities there. Essentially copy the add themes activity.
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -49,9 +51,10 @@ public class MainActivity extends AppCompatActivity {
     Button updateButton;
 
     Button deleteActivityButton;
-    Button addActivityButton;
+    Button addColumnButton;
     Button addThemeButton;
     Button setGoalButton;
+    Button addActivityButton;
 
 
 
@@ -69,8 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG,"In OnCreate()");
 
-
-        Mydb = new DBHelper(this);
+        Mydb = new DBHelper(this); // can call because it is a public class in the package
 
         ActivityName = (EditText) findViewById(R.id.EditTextActivityName);
         Value = (EditText) findViewById(R.id.EditTextValue);
@@ -83,9 +85,10 @@ public class MainActivity extends AppCompatActivity {
         updateButton = (Button) findViewById(R.id.UpdateButton);
         idUpdate = (EditText) findViewById(R.id.editTextID);
         deleteActivityButton = (Button) findViewById(R.id.DeleteActivityButton);
-        addActivityButton = (Button) findViewById(R.id.AddActivity);
+        addColumnButton = (Button) findViewById(R.id.AddColumn);
         addThemeButton = (Button) findViewById(R.id.AddThemeButton);
         setGoalButton = (Button) findViewById(R.id.SetGoalButton);
+        addActivityButton = (Button) findViewById(R.id.SetActivity);
 
 
         deleteTable();
@@ -96,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         addColumn();
         addTheme();
         setGoal();
+        addActivity();
 
     }
 
@@ -103,15 +107,11 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG,"In deleteTable()");
 
-
         deleteTable.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         Log.d(TAG,"Now In deleteTable.onclick listener");
-
-
                         Mydb.deleteTable();
                     }
                 }
@@ -122,13 +122,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void syncContacts() {
-
         syncButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-                        boolean IsInserted = Mydb.insetData(ActivityName.getText().toString(), Value.getText().toString());
+                        boolean IsInserted = Mydb.insertActivity(ActivityName.getText().toString(), Value.getText().toString());
                         if (IsInserted == true)
                             Toast.makeText(MainActivity.this, "Data is inserted", Toast.LENGTH_SHORT).show();
                         else
@@ -141,12 +139,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showAllContacts() {
-
         showAll.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         Cursor res2 = Mydb.getAllData();
                         if (res2.getCount() == 0){
                             // message saying error
@@ -161,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
 
                         }
                         showMessage("List", buffer.toString());
-
                     }
                 }
         );
@@ -179,11 +174,9 @@ public class MainActivity extends AppCompatActivity {
     public void idUpdateActivity(){
 
         updateButton.setOnClickListener(
-
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         boolean isUpdated=Mydb.updateData(idUpdate.getText().toString(),ActivityName.getText().toString(), Value.getText().toString());
                         if (isUpdated==true)
 
@@ -202,7 +195,6 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Integer isDeleted = Mydb.deleteActivity(idUpdate.getText().toString());
-
                         if (isDeleted > 0)
                             Toast.makeText(MainActivity.this, isDeleted.toString()+" Activities are Deleted", Toast.LENGTH_SHORT).show();
                         else
@@ -216,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addColumn(){
-        addActivityButton.setOnClickListener(
+        addColumnButton.setOnClickListener(
 
                 new View.OnClickListener() {
                     @Override
@@ -233,9 +225,8 @@ public class MainActivity extends AppCompatActivity {
         // Do something in response to button
     }
 
+    // opens a new activity to where themes are set and viewed.
     public void addTheme (){
-
-
         addThemeButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -244,15 +235,13 @@ public class MainActivity extends AppCompatActivity {
                         //String message = "Successful Intent";
                         //intent.putExtra(EXTRA_MESSAGE, message);
                         startActivity(intent);
-
                     }
                 }
         );
     }
 
+    // opens an activity to where goals are set.
     public void setGoal(){
-
-
         setGoalButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -265,6 +254,20 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
     }
+
+    public void addActivity(){
+        addActivityButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MainActivity.this,AddEvent.class);
+                        startActivity(intent);
+                    }
+                }
+        );
+    }
+
+
 
 
 

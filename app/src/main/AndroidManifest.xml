@@ -16,7 +16,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".EditThemePage" />
-        <activity android:name=".SetGoals"></activity>
+        <activity android:name=".SetGoals" />
+        <activity android:name=".AddEvent"></activity>
     </application>
 
 </manifest>
