@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
+import android.renderscript.Sampler;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
@@ -94,11 +95,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
-    public boolean insertActivity(String name2,String Value2){
+    public boolean insertActivity(String name2,String Value2,ArrayList<String> arrayListValues){
         SQLiteDatabase Mydb =this.getWritableDatabase();
         ContentValues newThingAdd = new ContentValues();
         newThingAdd.put(COL2_ACTIVITIES,name2);
         newThingAdd.put(COL3_ACTIVITIES,Value2);
+
+        for (int i=0;i < arrayList_CURRENTTheme_IDs.size();i++){
+            newThingAdd.put(arrayList_CURRENTTheme_IDs.get(i),arrayListValues.get(i));
+        }
+
         long result = Mydb.insert(TABLE_ACTIVITIES,null,newThingAdd);
         if (result==-1)
             return false;
@@ -107,29 +113,42 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public boolean insertTheme(String name2,String Description){
+
+        //allow to write to databases
         SQLiteDatabase Mydb =this.getWritableDatabase();
+
+        //set up theme to be added to ALL themes
         ContentValues newThingAdd = new ContentValues();
         newThingAdd.put(COL2_ALLTHEMES,name2);
         newThingAdd.put(COL3_ALLTHEMES,Description);
-        long result = Mydb.insertOrThrow(TABLE_ALLTHEMES,null,newThingAdd);
 
-        //Cursor res = Mydb.rawQuery("select * from "+TABLE_ALLTHEMES + " where 'ID2'" ,null);
+        // actually add to ALL themes database
+        long result = Mydb.insertOrThrow(TABLE_ALLTHEMES,null,newThingAdd);
         Cursor res = Mydb.rawQuery("select * from "+TABLE_ALLTHEMES ,null);
         res.moveToLast();
         if (res != null) {
-            //res.move(-1);
         }
 
+
+        String allID = res.getString(0); // this is getting the "All ID" for this specific value.
+        String allIDColumnName = "ID"+allID;
+
+        //set up theme to be added to CURRENT themes
         ContentValues newThingAdd123 = new ContentValues();
         newThingAdd123.put(COL2_CURRENTTHEMES,name2);
         newThingAdd123.put(COL3_CURRENTTHEMES,Description);
-        newThingAdd123.put("ID3",res.getString(0));
-        long result2 = Mydb.insertOrThrow(TABLE_CURRENTTHEMES,null,newThingAdd123);
+        newThingAdd123.put("ID3",allID);
 
+        //Actually add to CURRENT database
+        long result2 = Mydb.insertOrThrow(TABLE_CURRENTTHEMES,null,newThingAdd123);
         if ((result==-1)&(result2==-1))
             return false;
         else
-            return true;
+            Mydb.execSQL("ALTER TABLE "+TABLE_ACTIVITIES+" ADD COLUMN "+ allIDColumnName +" char(1)");
+            Mydb.execSQL("ALTER TABLE "+TABLE_GOALS+" ADD COLUMN "+ allIDColumnName +" char(1)");
+        return true;
+
+        ///Added the column extensions with themes 02/01/2018. TBC if they work.
     }
 
 
@@ -184,44 +203,47 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    ArrayList<String> a = new ArrayList<String>();
-    int b;
+    ArrayList<String> arrayList_CURRENTTheme_IDs = new ArrayList<String>();
+    int numberCURRENTThemes;
+    ArrayList<String> arrayList_CURRENTTheme_Names = new ArrayList<String>();
 
+    // this method returns all of the CURRENT theme names in a single array.
     public ArrayList<String> getAllThemes() {
-        ArrayList<String> array_list = new ArrayList<String>();
+        numberCURRENTThemes=0;
+        arrayList_CURRENTTheme_IDs.clear();
+        arrayList_CURRENTTheme_Names.clear();
 
         //hp = new HashMap();
         SQLiteDatabase Mydb = this.getReadableDatabase();
         Cursor res =  Mydb.rawQuery( "select * from " +TABLE_CURRENTTHEMES, null );
         res.moveToFirst();
 
-        b=0;
 
+        // this while loop builds up the arrays containing the CURRENT ids and the CURRENT theme names.
         while(res.isAfterLast() == false){
-            array_list.add(res.getString(res.getColumnIndex(COL2_CURRENTTHEMES)));
-
+            arrayList_CURRENTTheme_Names.add(res.getString(res.getColumnIndex(COL2_CURRENTTHEMES)));
             // stuff to do with getting the ID of the strings later
-            a.clear();
-            a.add(res.getString(res.getColumnIndex("ID3"))); // had to use the column name because i manually added it because i was dumb before. need to change in final build
+            arrayList_CURRENTTheme_IDs.add(res.getString(res.getColumnIndex("ID3"))); // had to use the column name because i manually added it because i was dumb before. need to change in final build
+            numberCURRENTThemes=numberCURRENTThemes+1;
             res.moveToNext();
-            b=b+1;
         }
-        return array_list;
+        return arrayList_CURRENTTheme_Names;
     }
 
-    public ArrayList<String> getAllThemeIDs() {
 
-        return a;
+// this returns all CURRENT theme ids
+    public ArrayList<String> getAllThemeIDs() {
+        return arrayList_CURRENTTheme_Names;
     }// this is only used for the test button to check the concept worked.
 
     public String getThemeID(String value){
 
-        return a.get(Integer.parseInt(value));
+        return arrayList_CURRENTTheme_Names.get(Integer.parseInt(value));
     }
 
     public int getNumberOfThemeIDs() {
 
-        return b;
+        return numberCURRENTThemes;
     }// this is only used for the test button to check the concept worked.
 
 
@@ -244,4 +266,34 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase Mydb = this.getWritableDatabase();
         return Mydb.delete(TABLE_CURRENTTHEMES, COL1_CURRENTTHEMES+" = " +"?", new String[]{id});
     }
+
+   // this method is to populate the goals and activities databases with columns for each of the themes in ALLTHEMES
+//    public void  temporaryMethod (){
+//
+//        ArrayList<String> array_list_AllThemeIDs = new ArrayList<String>();
+//
+//        //hp = new HashMap();
+//        SQLiteDatabase Mydb = this.getReadableDatabase();
+//        Cursor res =  Mydb.rawQuery( "select * from " +TABLE_ALLTHEMES, null );
+//
+//        // move cursor to the top of the selection then later use the while loop to move down one by one.
+//        res.moveToFirst();
+//        // this while loop just makes sure that you cycle down from the top of the selection to the last.
+//        while(res.isAfterLast() == false){
+//            // this copys the ID (Column 2) of the database in the arraylist each time it moves down.
+//            array_list_AllThemeIDs.add(res.getString(res.getColumnIndex("ID2")));
+//            res.moveToNext();
+//            //a.add(res.getString(res.getColumnIndex("ID3")));
+//        }
+//
+//        Mydb = this.getWritableDatabase();
+
+//        for (int i = 0; i <  array_list_AllThemeIDs.size();i++){
+//            String iDNumber = array_list_AllThemeIDs.get(i);
+//            String value2 = "ID"+iDNumber;
+//
+//            //Mydb.execSQL("ALTER TABLE "+TABLE_GOALS+" ADD COLUMN "+ value2 +" char(1)");
+//        }
+//    }
+
 }

@@ -1,6 +1,7 @@
 package com.example.kennethallan.testbuildofsqllightdatabase_01;
 
 import android.content.Context;
+import android.icu.text.StringSearch;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,7 +24,7 @@ public class AddEvent extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     DBHelper Mydb;
-    Button commitButton;
+    Button saveButton;
     EditText eventName;
     EditText eventDescription;
     ListView eventsListView;
@@ -35,7 +36,7 @@ public class AddEvent extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_event);
 
-        commitButton = (Button)findViewById(R.id.saveButton);
+        saveButton = (Button)findViewById(R.id.saveButton);
         eventName = (EditText) findViewById(R.id.editText);
         eventDescription = (EditText)findViewById(R.id.editText2);
         eventsListView = (ListView)findViewById(R.id.ListViewSetActivityInputs);
@@ -43,31 +44,48 @@ public class AddEvent extends AppCompatActivity {
 
         Mydb = new DBHelper(this);
 
-        addTheme ();
+        addEvent ();
         TEST();
 
         // Populate arrayAdaptor
-        String[] testString = {"Test1", "Test2", "Test3"};
+        ArrayList<String> themeValues = Mydb.getAllThemes();
 
-        ListAdapter themeListAdapter = new AddEvent.CustomAdaptor_InputNumbers(this,testString);
+        ListAdapter themeListAdapter = new AddEvent.CustomAdaptor_InputNumbers(this,themeValues);
         eventsListView.setAdapter(themeListAdapter);
     }
 
-    public void addTheme (){
+    public void addEvent (){
 
-        commitButton.setOnClickListener(
+        saveButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        boolean isInserted = Mydb.insertTheme(eventName.getText().toString(),eventDescription.getText().toString());
-                        if (isInserted == true)
-                            Toast.makeText(AddEvent.this, "Data is inserted", Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(AddEvent.this, "Data is NOT inserted", Toast.LENGTH_SHORT).show();
+
+                        ArrayList<String> values = compileValues();
+
+
+//                        boolean isInserted = Mydb.insertTheme(eventName.getText().toString(),eventDescription.getText().toString());
+//                        if (isInserted == true)
+//                            Toast.makeText(AddEvent.this, "Data is inserted", Toast.LENGTH_SHORT).show();
+//                        else
+//                            Toast.makeText(AddEvent.this, "Data is NOT inserted", Toast.LENGTH_SHORT).show();
 
                     }
                 }
         );
+    }
+    public ArrayList<String> compileValues(){
+        ArrayList<String> arrayList_Values = new ArrayList<String>();
+
+        eventsListView.getAdapter().getCount();
+        EditText view = (EditText) eventsListView.getChildAt(0).findViewById(R.id.et01);
+        String value = view.getText().toString();
+
+        arrayList_Values.add(value);
+
+        Toast.makeText(AddEvent.this, arrayList_Values.get(0), Toast.LENGTH_SHORT).show();
+
+        return arrayList_Values;
     }
 
 
@@ -95,7 +113,7 @@ public class AddEvent extends AppCompatActivity {
 
         int progressValue;
 
-        public CustomAdaptor_InputNumbers(Context context, String[] resource) {
+        public CustomAdaptor_InputNumbers(Context context, ArrayList<String> resource) {
             super(context, R.layout.input_activitynumbers, resource);
         }
 

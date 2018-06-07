@@ -126,13 +126,13 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        boolean IsInserted = Mydb.insertActivity(ActivityName.getText().toString(), Value.getText().toString());
-                        if (IsInserted == true)
-                            Toast.makeText(MainActivity.this, "Data is inserted", Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(MainActivity.this, "Data is NOT inserted", Toast.LENGTH_SHORT).show();
+//                        boolean IsInserted = Mydb.insertActivity(ActivityName.getText().toString(), Value.getText().toString());
+//                        if (IsInserted == true)
+//                            Toast.makeText(MainActivity.this, "Data is inserted", Toast.LENGTH_SHORT).show();
+//                        else
+//                            Toast.makeText(MainActivity.this, "Data is NOT inserted", Toast.LENGTH_SHORT).show();
 
-                    }
+                    }// need to come back and extend the insert activity method to have an array adapter input or just delete it from here since its no longet necessary
                 }
         );
 

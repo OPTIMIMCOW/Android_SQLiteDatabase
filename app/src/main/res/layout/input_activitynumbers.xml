@@ -19,6 +19,7 @@
         android:layout_height="50dp"
         android:id="@+id/et01"
         android:hint="MM"
+        android:inputType="number"
         />
 
 </LinearLayout>
