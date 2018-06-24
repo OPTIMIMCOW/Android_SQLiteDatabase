@@ -16,7 +16,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/AddColumn"
-        android:layout_marginTop="13dp"
         android:text="Add Theme " />
 
     <TextView
@@ -139,6 +138,14 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/SetGoalButton"
         android:text="Add Activity" />
+
+    <Button
+        android:id="@+id/Summary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/SetActivity"
+        android:text="Time Is Up!" />
 
 
 </RelativeLayout>

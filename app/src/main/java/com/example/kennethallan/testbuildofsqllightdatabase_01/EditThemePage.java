@@ -47,7 +47,7 @@ public class EditThemePage extends AppCompatActivity {
 
         // Populate arrayAdaptor
 
-        ListAdapter themeListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,Mydb.getAllThemes());
+        ListAdapter themeListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,Mydb.getCURRENTThemeNames());
         themeListView.setAdapter(themeListAdapter);
 
 
@@ -97,7 +97,7 @@ public class EditThemePage extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ArrayList<String> a = Mydb.getAllThemeIDs();
+                        ArrayList<String> a = Mydb.getCURRENTThemeIDs();
                         if (a.size()>0)
                             Toast.makeText(EditThemePage.this, a.get(0).toString(), Toast.LENGTH_SHORT).show();
                         else

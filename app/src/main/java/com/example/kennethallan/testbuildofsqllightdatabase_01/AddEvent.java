@@ -48,7 +48,7 @@ public class AddEvent extends AppCompatActivity {
         TEST();
 
         // Populate arrayAdaptor
-        ArrayList<String> themeValues = Mydb.getAllThemes();
+        ArrayList<String> themeValues = Mydb.getCURRENTThemeNames();
 
         ListAdapter themeListAdapter = new AddEvent.CustomAdaptor_InputNumbers(this,themeValues);
         eventsListView.setAdapter(themeListAdapter);
@@ -95,7 +95,7 @@ public class AddEvent extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ArrayList<String> a = Mydb.getAllThemeIDs();
+                        ArrayList<String> a = Mydb.getCURRENTThemeIDs();
                         if (a.size()>0)
                             Toast.makeText(AddEvent.this, a.get(0).toString(), Toast.LENGTH_SHORT).show();
                         else

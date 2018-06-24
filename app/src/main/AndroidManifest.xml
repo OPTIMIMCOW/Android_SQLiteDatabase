@@ -17,7 +17,8 @@
         </activity>
         <activity android:name=".EditThemePage" />
         <activity android:name=".SetGoals" />
-        <activity android:name=".AddEvent"></activity>
+        <activity android:name=".AddEvent" />
+        <activity android:name=".Summary"></activity>
     </application>
 
 </manifest>

@@ -30,10 +30,10 @@ public class SetGoals extends AppCompatActivity {
     EditText et_goalsInput_Hours;
 
 
-    ArrayList<String> arrayList_GlobalValues = new ArrayList<>(); // arraylist for the values extracted from the sliders
+    ArrayList<String> arrayList_GlobalValues = new ArrayList<String>(); // arraylist for the values extracted from the sliders
     int numAdapterValues;
-    int goal_InputTime = 0;
-    ArrayList<Integer> goalsValues = new ArrayList<Integer>(); // arraylist for the factored values  for goal after being combined with the time input. to be saved in the DB database.
+    int goal_InputTime = 0; // to initalise the values
+    ArrayList<String> arrayList_GoalsValues = new ArrayList<String>(); // arraylist for the factored values  for goal after being combined with the time input. to be saved in the DB database.
 
     //TODO figure out if the database is based on current themes or all themes and alter the golasValues arraylist as required to input into SqliteDB.
 
@@ -57,7 +57,7 @@ public class SetGoals extends AppCompatActivity {
         // Populate arrayAdaptor
 
         //String[] testString = {"Test1", "Test2", "Test3"}; Currently not using.
-        ArrayList<String> themeValues = Mydb.getAllThemes();
+        ArrayList<String> themeValues = Mydb.getCURRENTThemeNames();
 
         ListAdapter themeListAdapter = new CustomAdaptor_InputSliders(this,themeValues);
         setGoalsListView.setAdapter(themeListAdapter);
@@ -95,11 +95,38 @@ public class SetGoals extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         goal_InputTime = getFreeTime(); // passing to the global variable.
-                        Toast.makeText(SetGoals.this, Integer.toString(goal_InputTime), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(SetGoals.this, Integer.toString(goal_InputTime), Toast.LENGTH_SHORT).show();
+                        calculateGoals(arrayList_GlobalValues,goal_InputTime);
+                        boolean tempresult = Mydb.insertGoal(arrayList_GoalsValues);
+                        if (tempresult){
+                            Toast.makeText(SetGoals.this, "Succeeded To Input Goals", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(SetGoals.this, "Failed To Input Goals", Toast.LENGTH_SHORT).show();
 
-                    }
+                        }
+
+//                        Mydb.getCURRENTThemeNames();
+//                        ArrayList<String> TEMP = Mydb.getCURRENTThemeIDs();
+//                        //Toast.makeText(SetGoals.this, Integer.toString(TEMP.get(0).length()), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(SetGoals.this, TEMP.get(0), Toast.LENGTH_SHORT).show();
+//                        if (arrayList_GoalsValues.get(0)=="35"){
+//                            Toast.makeText(SetGoals.this, "Strings are the same. Should have worked", Toast.LENGTH_SHORT).show();
+//                        }else{
+//                            Toast.makeText(SetGoals.this, "Strings are different", Toast.LENGTH_SHORT).show();
+//                            String oldMessage="";
+//                            String newMessage="";
+//                            for (int i=0;i<arrayList_GoalsValues.get(0).length();i++){
+//                                char value = arrayList_GoalsValues.get(0).charAt(i);
+//                                newMessage = i+"="+value+",";
+//                                oldMessage= oldMessage+newMessage;
+//
+//                            }
+//                            Toast.makeText(SetGoals.this, oldMessage, Toast.LENGTH_SHORT).show();
+//
+//
+//                        }
+                   }
                 }
         );
     }
@@ -113,7 +140,7 @@ public class SetGoals extends AppCompatActivity {
         return temp;
     }
 
-    public ArrayList<Integer> calculateGoals(ArrayList<String> valuesFromSliders,Integer freeTime ) {
+    public void calculateGoals(ArrayList<String> valuesFromSliders,Integer freeTime ) {
         //sum values
         Integer sumNew = 0;
         Integer sumOld = 0;
@@ -126,17 +153,15 @@ public class SetGoals extends AppCompatActivity {
         double max = (double) freeTime;
 
         double ratio = max / (double) sumOld;
-        goalsValues.clear();
+        arrayList_GoalsValues.clear();
 
         for (int i = 0; i < valuesFromSliders.size(); i++) {
             int factoredGoalTime = (int) Math.round(Integer.parseInt(valuesFromSliders.get(i)) * ratio);
-            goalsValues.add(factoredGoalTime);
+            arrayList_GoalsValues.add(Integer.toString(factoredGoalTime));
         }
 
-        //TODO figure out if the database is based on current themes or all themes and alter the golasValues arraylist as required to input into SqliteDB.
-
-        return goalsValues;
     }
+
 
 
 
@@ -185,6 +210,7 @@ public class SetGoals extends AppCompatActivity {
 
                     if (recordFirstCounter == 0){
                         startBuild();
+                        compileValues();
                         recordFirstCounter=1;
                     }else{
                         compileValues();
@@ -226,7 +252,7 @@ public class SetGoals extends AppCompatActivity {
 
             for (int i=0; i < numAdapterValues;i++ ){
                 try{
-                    SeekBar seekbar = (SeekBar) setGoalsListView.getChildAt(0).findViewById(R.id.seekBar2);
+                    SeekBar seekbar = (SeekBar) setGoalsListView.getChildAt(i).findViewById(R.id.seekBar2);
                     String value = Integer.toString(seekbar.getProgress());
                     arrayList_Values.set(i,value);
                 }catch (Exception e) {

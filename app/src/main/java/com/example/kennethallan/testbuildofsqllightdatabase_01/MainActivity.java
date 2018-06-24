@@ -55,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
     Button addThemeButton;
     Button setGoalButton;
     Button addActivityButton;
+    Button makeSummaryButton;
+
 
 
 
@@ -89,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
         addThemeButton = (Button) findViewById(R.id.AddThemeButton);
         setGoalButton = (Button) findViewById(R.id.SetGoalButton);
         addActivityButton = (Button) findViewById(R.id.SetActivity);
+        makeSummaryButton = (Button) findViewById(R.id.Summary);
+
 
 
         deleteTable();
@@ -100,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         addTheme();
         setGoal();
         addActivity();
+        makeSummary();
 
     }
 
@@ -267,6 +272,21 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    public void makeSummary(){
+        makeSummaryButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MainActivity.this,Summary.class);
+                        startActivity(intent);
+                    }
+                }
+        );
+    }
+
+
+    // TODO add column to set goals table to have functionality of distinguishing carry over goals from set goals
+    // TODO integrate carry over functionality
 
 
 
