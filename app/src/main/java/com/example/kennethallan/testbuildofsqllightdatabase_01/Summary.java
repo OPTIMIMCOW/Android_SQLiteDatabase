@@ -88,7 +88,7 @@ public class Summary extends AppCompatActivity {
                         ArrayList<String> temp = new ArrayList<String>();
                         temp = Mydb.getGoals_CURRENT();
                         String TEMPdate_fetch = Mydb.getGoalStartDate();
-
+                        String temp123;
                         Date reconstructedDate = new Date(Long.parseLong(TEMPdate_fetch));
 
                         if (TEMPdate_long > Long.parseLong(TEMPdate_fetch)) {
