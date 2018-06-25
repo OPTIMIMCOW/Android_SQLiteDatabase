@@ -26,14 +26,43 @@
         android:layout_below="@+id/editText"
         android:layout_alignParentStart="true" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:id="@+id/LL_timeInputs"
+        android:layout_below="@+id/editText2">
+
+    <EditText
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:id="@+id/et_inputFreeTime_Hours"
+        android:layout_gravity="center_vertical"
+        android:hint="HH"
+        android:textAlignment="center"
+        android:inputType="number"/>
+
+    <EditText
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:id="@+id/et_inputFreeTime_Minutes"
+        android:layout_gravity="center_vertical"
+        android:hint="MM"
+        android:textAlignment="center"
+        android:inputType="number"/>
+
+    </LinearLayout>
     <Button
-        android:text="Save Changes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/saveButton"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_below="@+id/editText2"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="29dp" />
+        android:layout_marginTop="14dp"
+        android:text="Save Changes" />
 
     <ListView
         android:layout_width="match_parent"
@@ -46,11 +75,10 @@
         android:layout_below="@+id/TestButton" />
 
     <Button
-        android:text="TEST"
+        android:id="@+id/TestButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="87dp"
-        android:id="@+id/TestButton"
+        android:layout_alignParentEnd="true"
         android:layout_below="@+id/saveButton"
-        android:layout_alignStart="@+id/ListViewSetGoals" />
+        android:text="TEST" />
 </RelativeLayout>

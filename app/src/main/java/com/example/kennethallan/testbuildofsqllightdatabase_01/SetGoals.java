@@ -62,30 +62,6 @@ public class SetGoals extends AppCompatActivity {
         ListAdapter themeListAdapter = new CustomAdaptor_InputSliders(this,themeValues);
         setGoalsListView.setAdapter(themeListAdapter);
 
-
-
-
-
-        /*setGoalsListView.setOnItemClickListener(
-
-                new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        String ThemeName = String.valueOf(parent.getItemAtPosition(position));
-                        //Toast.makeText(EditThemePage.this,ThemeName,Toast.LENGTH_SHORT).show();
-
-                        String IDtoDelete = Mydb.getThemeID(ThemeName);
-                        int isDeleted = Mydb.deleteTheme(IDtoDelete);
-
-                        if (isDeleted > 0)
-                            Toast.makeText(SetGoals.this, "Theme Deleted", Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(SetGoals.this, "No Themes were Deleted", Toast.LENGTH_SHORT).show();
-
-                    }
-                }
-        );*/
-
     }
 
 
@@ -98,7 +74,8 @@ public class SetGoals extends AppCompatActivity {
                         goal_InputTime = getFreeTime(); // passing to the global variable.
                         //Toast.makeText(SetGoals.this, Integer.toString(goal_InputTime), Toast.LENGTH_SHORT).show();
                         calculateGoals(arrayList_GlobalValues,goal_InputTime);
-                        boolean tempresult = Mydb.insertGoal(arrayList_GoalsValues);
+                        String manualSet = "Y"; // Strring to distinguish this input as manual input
+                        boolean tempresult = Mydb.insertGoal(arrayList_GoalsValues,manualSet);
                         if (tempresult){
                             Toast.makeText(SetGoals.this, "Succeeded To Input Goals", Toast.LENGTH_SHORT).show();
                         }else{
@@ -106,26 +83,6 @@ public class SetGoals extends AppCompatActivity {
 
                         }
 
-//                        Mydb.getCURRENTThemeNames();
-//                        ArrayList<String> TEMP = Mydb.getCURRENTThemeIDs();
-//                        //Toast.makeText(SetGoals.this, Integer.toString(TEMP.get(0).length()), Toast.LENGTH_SHORT).show();
-//                        Toast.makeText(SetGoals.this, TEMP.get(0), Toast.LENGTH_SHORT).show();
-//                        if (arrayList_GoalsValues.get(0)=="35"){
-//                            Toast.makeText(SetGoals.this, "Strings are the same. Should have worked", Toast.LENGTH_SHORT).show();
-//                        }else{
-//                            Toast.makeText(SetGoals.this, "Strings are different", Toast.LENGTH_SHORT).show();
-//                            String oldMessage="";
-//                            String newMessage="";
-//                            for (int i=0;i<arrayList_GoalsValues.get(0).length();i++){
-//                                char value = arrayList_GoalsValues.get(0).charAt(i);
-//                                newMessage = i+"="+value+",";
-//                                oldMessage= oldMessage+newMessage;
-//
-//                            }
-//                            Toast.makeText(SetGoals.this, oldMessage, Toast.LENGTH_SHORT).show();
-//
-//
-//                        }
                    }
                 }
         );

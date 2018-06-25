@@ -32,6 +32,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COL1_ACTIVITIES = "ID2";
     public static final String COL2_ACTIVITIES = "NAME";
     public static final String COL3_ACTIVITIES = "MARKS";
+    public static final String COL4_ACTIVITIES = "Date";
+
 
     // avoid the sqlite keywords of "Table", "Values" etc in the database name
 
@@ -51,6 +53,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_GOALS = "Goals";
     public static final String COL1_GOALS = "ID2";
     public static final String COL2_GOALS = "DATE";
+    public static final String COL3_GOALS = "IsManualSet";
 
     //The History Table
     public static final String TABLE_HISTORY = "History";
@@ -97,14 +100,25 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
-    public boolean insertActivity(String name2,String Value2,ArrayList<String> arrayListValues){
+    public boolean insertActivity(String eventTitle,String eventDescription,ArrayList<String> eventValues){
         SQLiteDatabase Mydb =this.getWritableDatabase();
+
         ContentValues newThingAdd = new ContentValues();
-        newThingAdd.put(COL2_ACTIVITIES,name2);
-        newThingAdd.put(COL3_ACTIVITIES,Value2);
+        newThingAdd.put(COL2_ACTIVITIES,eventTitle);
+        newThingAdd.put(COL3_ACTIVITIES,eventDescription);
+
+        Date currentDate = Calendar.getInstance().getTime();
+        long currentDate_asLong = currentDate.getTime(); // get current date as a long so that we can save that as a string then we can get date object later.
+        //set up theme to be added to ALL themes
+        newThingAdd.put(COL4_ACTIVITIES,Long.toString(currentDate_asLong));
+
+        if (arrayList_CURRENTTheme_IDs.size()==0){
+            getCURRENTThemeIDs();
+        }
 
         for (int i=0;i < arrayList_CURRENTTheme_IDs.size();i++){
-            newThingAdd.put(arrayList_CURRENTTheme_IDs.get(i),arrayListValues.get(i));
+            String colName = "ID"+ arrayList_CURRENTTheme_IDs.get(i);
+            newThingAdd.put(colName,eventValues.get(i));
         }
 
         long result = Mydb.insert(TABLE_ACTIVITIES,null,newThingAdd);
@@ -195,9 +209,9 @@ public class DBHelper extends SQLiteOpenHelper {
 // adds a column to a table. Currently not in active use. Only used here when I need to extend a table becasuse I didnt create it properly in the first place.
     public void AddColumn(){
         SQLiteDatabase Mydb =this.getWritableDatabase();
-        //Mydb.execSQL("ALTER TABLE Activities ADD COLUMN SEX char(1)");
+        Mydb.execSQL("ALTER TABLE Activities ADD COLUMN Date char(1)");
         //Mydb.execSQL("ALTER TABLE CurrentThemes ADD COLUMN ID3 char(1)");
-        Mydb.execSQL("ALTER TABLE Goals ADD COLUMN IsManualSet char(1)");
+        //Mydb.execSQL("ALTER TABLE Goals ADD COLUMN IsManualSet char(1)");
         //Mydb.execSQL("ALTER TABLE History ADD COLUMN ID3 char(1)");
     }
 
@@ -287,23 +301,24 @@ public class DBHelper extends SQLiteOpenHelper {
     }// this is only used for the test button to check the concept worked.
 
 
+
+
     public int deleteTheme(String id) {
         SQLiteDatabase Mydb = this.getWritableDatabase();
         return Mydb.delete(TABLE_CURRENTTHEMES, COL1_CURRENTTHEMES+" = " +"?", new String[]{id});
     }
 
-    public boolean insertGoal(ArrayList<String> goalValues) {
+    public boolean insertGoal(ArrayList<String> goalValues, String manualSet) {
 
         ArrayList<String> temp = goalValues;
 
         //allow to write to databases
         SQLiteDatabase Mydb = this.getWritableDatabase();
-        String currentTime = Calendar.getInstance().getTime().toString(); //TODO maybe in next build try to make a column which can be a date format???? so its easier to compare and read?
+        Date currentDate = Calendar.getInstance().getTime(); //TODO maybe in next build try to make a column which can be a date format???? so its easier to compare and read?
+        long currentDate_asLong = currentDate.getTime(); // get current date as a long so that we can save that as a string then we can get date object later.
         //set up theme to be added to ALL themes
         ContentValues newThingAdd = new ContentValues();
-        newThingAdd.put(COL2_GOALS, currentTime);
-
-
+        newThingAdd.put(COL2_GOALS, Long.toString(currentDate_asLong)); // date as a long but in string for database
 
         ArrayList<String> themeIDs = getCURRENTThemeIDs();
 
@@ -311,7 +326,9 @@ public class DBHelper extends SQLiteOpenHelper {
             newThingAdd.put("ID" + themeIDs.get(i), goalValues.get(i));
         }
 
-
+        if (manualSet =="Y"){
+            newThingAdd.put(COL3_GOALS, "Y");
+        }
 
         // actually add to ALL themes database
         long result = Mydb.insertOrThrow(TABLE_GOALS, null, newThingAdd);
@@ -322,6 +339,107 @@ public class DBHelper extends SQLiteOpenHelper {
             return true;
         }
 
+    }
+
+    ArrayList<String> arrayList_CURRENTGoal_Values = new ArrayList<String>();
+    ArrayList<String> arrayList_MANUALGoal_Values = new ArrayList<String>();
+    String goal_StartDate = null;
+    String goal_ManualIndicator = null;
+
+
+    // this method returns the values of the current goal targests we are looking at (inc both manual and carry over sets)
+    public ArrayList<String> getGoals_CURRENT() {
+        goal_StartDate="";
+        goal_ManualIndicator="";
+        arrayList_CURRENTGoal_Values.clear();
+
+        //hp = new HashMap();
+        SQLiteDatabase Mydb = this.getReadableDatabase();
+        Cursor res =  Mydb.rawQuery( "select * from " +TABLE_GOALS, null );
+
+        // trying to move to last row
+        res.moveToLast();
+
+        // used to make sure we are getting the last row
+        while(res.isAfterLast() == true){
+            int pos_CURRENT = res.getPosition();
+            int pos_NEW = pos_CURRENT - 1;
+            res.moveToPosition(pos_NEW);
+        }
+
+        // sets the date value of the current goal sequence we are looking at.
+        goal_StartDate = res.getString(res.getColumnIndex(COL2_GOALS));
+
+        // sets the manual indicator value of the current goal sequence we are looking at.
+        goal_ManualIndicator = res.getString(res.getColumnIndex(COL3_GOALS));
+
+        if (arrayList_CURRENTTheme_IDs.size()==0){
+            getCURRENTThemeIDs();
+        }
+
+        for (int i=0; i<arrayList_CURRENTTheme_IDs.size();i++){
+
+            String columName = "ID" + arrayList_CURRENTTheme_IDs.get(i);
+            arrayList_CURRENTGoal_Values.add(res.getString(res.getColumnIndex(columName)));
+        }
+
+        return arrayList_CURRENTGoal_Values;
+    }
+
+    public ArrayList<String> getGoals_MANUAL() {
+        goal_StartDate="";
+        goal_ManualIndicator="";
+        arrayList_MANUALGoal_Values.clear();
+
+        //hp = new HashMap();
+        SQLiteDatabase Mydb = this.getReadableDatabase();
+        Cursor res =  Mydb.rawQuery( "select * from " +TABLE_GOALS, null );
+
+        // trying to move to last row
+        res.moveToLast();
+
+        // used to make sure we are getting the last row
+        while(res.isAfterLast() == true){
+            int pos_CURRENT = res.getPosition();
+            int pos_NEW = pos_CURRENT - 1;
+            res.moveToPosition(pos_NEW);
+        }
+
+        // used to move to the most recent value of goals that were manually set.
+        while(res.getString(res.getColumnIndex(COL3_GOALS)) != "Y"){
+            int pos_CURRENT = res.getPosition();
+            int pos_NEW = pos_CURRENT - 1;
+            res.moveToPosition(pos_NEW);
+        }
+
+        // sets the date value of the current goal sequence we are looking at.
+        goal_StartDate = res.getString(res.getColumnIndex(COL2_GOALS));
+
+        // sets the manual indicator value of the current goal sequence we are looking at.
+        goal_ManualIndicator = res.getString(res.getColumnIndex(COL3_GOALS));
+
+        if (arrayList_CURRENTTheme_IDs.size()==0){
+            getCURRENTThemeIDs();
+        }
+
+        for (int i=0; i<arrayList_CURRENTTheme_IDs.size();i++){
+
+            String columName = "ID" + arrayList_CURRENTTheme_IDs.get(i);
+            arrayList_MANUALGoal_Values.add(res.getString(res.getColumnIndex(columName)));
+
+        }
+
+        return arrayList_MANUALGoal_Values;
+    }
+
+    // returns the start date for the goals sequence we are looking at. This can either be
+    // a manual set list or a carry over list since the variable is overwritten in both.
+    public String getGoalStartDate(){
+        return goal_StartDate;
+    }
+
+    public String getManualIndicator(){
+        return goal_ManualIndicator;
     }
 
 }
